@@ -1,0 +1,76 @@
+"""
+NOTES:
+This code will control
+the OLED Display, Buzzer and RGB LEDs on EDU PICO
+when there is a gesture or object detected on proximity sensor
+ 
+AUTHOR   : Cytron Technologies Sdn Bhd
+WEBSITE  : www.cytron.io
+EMAIL    : support@cytron.io
+"""
+import board, time, busio, neopixel, simpleio
+from adafruit_apds9960.apds9960 import APDS9960
+import adafruit_ssd1306
+
+i2c = busio.I2C(board.GP5, board.GP4)
+apds = APDS9960(i2c)
+apds.enable_color = True
+apds.enable_proximity = True
+
+buzzer = board.GP21
+oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c)
+
+num_pixels = 5
+pixel_pin = board.GP14
+pixels = neopixel.NeoPixel(pixel_pin, num_pixels, brightness=0.2)
+
+while True:
+    proximity = apds.proximity
+    print("Proximity:", proximity)
+    time.sleep(0.1)
+    if apds.proximity > 10:
+        for i in range(3):
+            simpleio.tone(buzzer, 100, 0.1)
+            simpleio.tone(buzzer, 0, 0.1)
+    if apds.proximity > 10:
+        for i in range(1):
+            pixels.fill((255,255,255))
+            time.sleep(1)
+            pixels.fill((0,0,0))
+            
+    if apds.proximity > 10:
+        for i in range(1):
+         oled.fill(0)
+         oled.invert(True)
+         oled.text("DANGER!", 50, 20, 1)
+         oled.text("GO!!!", 50, 35, 1)
+         oled.show()
+         
+    if apds.proximity < 10:
+        for i in range(1):
+         oled.fill(0)
+         oled.invert(True)
+         oled.text("-SAFE-", 50, 20, 1)
+         oled.show()
+         
+         
+    
+
+            
+    
+   
+            
+    
+   
+    
+
+    
+  
+        
+            
+    
+    
+
+
+
+
